@@ -3,13 +3,14 @@
     del modulo bluetooth hc-05 en la universidad mariano
     galvez de guatemala en Salama Baja verapaz
     Gracias por la invitacion
-    Yeffri J. Salazar Comunidad Arduino Guatemala. 
-    
+    Yeffri J. Salazar Comunidad Arduino Guatemala.
+
 */
 
 
 #include "LedControl.h"
-
+#include <SoftwareSerial.h>;
+SoftwareSerial BT(8, 9); //rx,tx
 LedControl lc = LedControl(16, 15, 10, 1); // leonardo
 //LedControl lc=LedControl(12,11,10,1);// old wire uno, mega.
 byte derecha[] = {
@@ -75,18 +76,13 @@ void setup() {
   /* and clear the display */
   lc.clearDisplay(0);
 
-
-  delay(1000);
-
-  delay(1000);
-  delay(1000);
-  Serial.begin(9600);
+  BT.begin(9600);
   pinMode(2, OUTPUT);
-  pinMode(1, OUTPUT);
+  pinMode(5, OUTPUT);
   pinMode(3, OUTPUT);
   pinMode(4, OUTPUT);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
+  while (!BT) {
+    ; // wait for BT port to connect. Needed for native USB port only
   }
 }
 
@@ -96,15 +92,16 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (Serial.available() > 0) {
-    char a = Serial.read();
+  if (BT.available() > 0) {
+    char a = BT.read();
+    BT.println(a);
     switch (a) {
       case 'a':
         for (int i = 0; i < 8; i++) {
           lc.setRow(0, i, derecha[i]);
         }
         digitalWrite(2, HIGH);
-        digitalWrite(1, LOW);
+        digitalWrite(5, LOW);
         digitalWrite(3, LOW);
         digitalWrite(4, LOW);
         break;
@@ -112,7 +109,7 @@ void loop() {
         for (int i = 0; i < 8; i++) {
           lc.setRow(0, i, abajo[i]);
         }
-        digitalWrite(1, HIGH);
+        digitalWrite(5, HIGH);
         digitalWrite(2, LOW);
         digitalWrite(3, LOW);
         digitalWrite(4, LOW);
@@ -122,7 +119,7 @@ void loop() {
           lc.setRow(0, i, izquierda[i]);
         }
         digitalWrite(3, HIGH);
-        digitalWrite(1, LOW);
+        digitalWrite(5, LOW);
         digitalWrite(2, LOW);
         digitalWrite(4, LOW);
         break;
@@ -130,16 +127,16 @@ void loop() {
           lc.setRow(0, i, arriba[i]);
         }
         digitalWrite(4, HIGH);
-        digitalWrite(1, LOW);
+        digitalWrite(5, LOW);
         digitalWrite(3, LOW);
         digitalWrite(2, LOW);
         break;
-      case ' ':
+      case 'q':
         for (int i = 0; i < 8; i++) {
           lc.setRow(0, i, parar[i]);
         }
         digitalWrite(4, LOW);
-        digitalWrite(1, LOW);
+        digitalWrite(5, LOW);
         digitalWrite(3, LOW);
         digitalWrite(2, LOW);
         break;
